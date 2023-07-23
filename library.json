@@ -1,0 +1,25 @@
+{
+  "name": "EasyHomeassistantLibrary",
+  "version": "0.0.1",
+  "description": "This library is an easy to use interface to your homeassistant instance. So it can be used in your projects easily.",
+  "keywords": "homeassistant, sensors, actuators",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/Kammerlo/EasyHomeassistant"
+  },
+  "authors":
+  [
+    {
+      "name": "Thomas Kammerlocher",
+      "email": "th.kammerlocher@gmail.com",
+      "maintainer": true
+    }
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "ownername/print": "~1.3.0"
+  },
+  "frameworks": "*",
+  "platforms": "*"
+}

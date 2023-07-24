@@ -2,6 +2,8 @@
 #define EASYHA_H
 #include <Arduino.h>
 #include <ArduinoJson.h>
+#include <map>
+#include <string>
 
 #if defined(ESP8266) 
     #include <ESP8266WiFi.h>
@@ -12,8 +14,8 @@
 #endif
 
 struct SensorStruct {
-    String value;
-    String unit;
+    String state;
+    std::map<String,String> attributes;
 };
 
 class EasyHA
@@ -23,7 +25,12 @@ class EasyHA
         EasyHA(String url);
         EasyHA(String url, String haToken);
 
-        SensorStruct readSensorValue(String sensorName);
+        SensorStruct readSensorValue(String entity_id);
+        String updateSensorValue(String entity_id,String state, std::map<String,String> attributes);
+        String updateSensorValue(String entity_id,String state, String unit);
+        String updateSensorValue(String entity_id,String state, String unit, String friendly_name);
+        boolean deleteEntity(String entity_id);
+        
         void setWifiClient(WiFiClient &client);
         void setHTTPClient(HTTPClient &client);
 
@@ -39,7 +46,13 @@ class EasyHA
         WiFiClient *_wifiClient = new WiFiClient();
         HTTPClient *_httpClient = new HTTPClient();
 
-        String httpCall(String url);
+        String httpGetCall(String url);
+        String httpPostCall(String url, String payload);
+        int httpDeleteCall(String url);
+        String constructHAJson(String state,std::map<String,String> attributes);
+
+        String httpResponseHandling(int httpCode);
+        void prepareHTTPHeader();
 
 };
 

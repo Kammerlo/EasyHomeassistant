@@ -1,6 +1,6 @@
 {
   "name": "EasyHomeassistant",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "This library is an easy to use interface to your homeassistant instance. So it can be used in your projects easily.",
   "keywords": "homeassistant, sensors, actuators",
   "repository":

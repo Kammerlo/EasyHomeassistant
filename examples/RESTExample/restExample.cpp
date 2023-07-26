@@ -37,6 +37,8 @@ void loop() {
     // and deleting it afterwards
     easyHA.deleteEntity("test-entity");
 
+    CalendarStruct calendarEntries = easyHA.getCalendarEntries("calendar.default_calendar","2023-07-26T00:00:00","2023-07-29T00:00:00");
+
     delay(5 * 1000); 
     
   }

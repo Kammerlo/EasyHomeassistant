@@ -13,4 +13,4 @@ For the full API see the [official Home Assistant Documentation](https://develop
 - MQTT API
 
 
-**Feel free to suggest something, you need**
+**Feel free to suggest something you need**

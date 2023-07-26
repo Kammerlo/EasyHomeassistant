@@ -4,6 +4,7 @@
 #include <ArduinoJson.h>
 #include <map>
 #include <string>
+#include <ctime>
 
 #if defined(ESP8266) 
     #include <ESP8266WiFi.h>
@@ -18,6 +19,13 @@ struct SensorStruct {
     std::map<String,String> attributes;
 };
 
+template<size_t desiredSize> struct CalendarStruct {
+    int entries;
+    String start[desiredSize];
+    String end[desiredSize];
+    String summary[desiredSize];
+};
+
 class EasyHA
 {
 
@@ -25,11 +33,15 @@ class EasyHA
         EasyHA(String url);
         EasyHA(String url, String haToken);
 
-        SensorStruct readSensorValue(String entity_id);
-        String updateSensorValue(String entity_id,String state, std::map<String,String> attributes);
-        String updateSensorValue(String entity_id,String state, String unit);
-        String updateSensorValue(String entity_id,String state, String unit, String friendly_name);
-        boolean deleteEntity(String entity_id);
+        SensorStruct readSensorValue(String entityId);
+        String updateSensorValue(String entityId,String state, std::map<String,String> attributes);
+        String updateSensorValue(String entityId,String state, String unit);
+        String updateSensorValue(String entityId,String state, String unit, String friendly_name);
+        CalendarStruct<3> getCalendarEntries(String calendar_id, time_t start, time_t end);
+        CalendarStruct<3> getCalendarEntries(String calendar_id, String start, String end);
+
+
+        boolean deleteEntity(String entityId);
         
         void setWifiClient(WiFiClient &client);
         void setHTTPClient(HTTPClient &client);

@@ -38,8 +38,55 @@ void EasyHA::setHTTPClient(HTTPClient &client) {
   this->_httpClient = &client;
 }
 
-SensorStruct EasyHA::readSensorValue(String entity_id) {
-    String url = this->_baseURL + "/api/states/sensor." + entity_id;
+/**
+ * Gets the calendar entries from Homeassistant. Take care to set up NTP for your ESP. 
+ * JSONDocumentSize is set for three calendar entries. 
+ * Calculate needed size with ArduinoJSON Assistant https://arduinojson.org/v6/assistant/#/step1
+ * 
+ * @param calendar_id 
+ * @param start Needed Format %Y-%m-%dT%H-%M-%S -> e.g. 2023-07-26T17:25:00
+ * @param end Needed Format %Y-%m-%dT%H-%M-%S -> e.g. 2023-07-26T17:25:00
+ * @return 
+*/
+CalendarStruct<3> EasyHA::getCalendarEntries(String calendar_id, time_t start, time_t end) {
+  char startDate[20];
+  char endDate[20];
+  strftime(startDate,sizeof(startDate),"%Y-%m-%dT%H-%M-%S", localtime(&start));
+  strftime(endDate,sizeof(endDate),"%Y-%m-%dT%H-%M-%S", localtime(&end));
+  return getCalendarEntries(calendar_id,String(startDate),String(endDate));
+}
+
+/**
+ * Gets the calendar entries from Homeassistant. Take care to set up NTP for your ESP. 
+ * JSONDocumentSize is set for three calendar entries. 
+ * Calculate needed size with ArduinoJSON Assistant https://arduinojson.org/v6/assistant/#/step1
+ * 
+ * @param calendar_id 
+ * @param start Needed Format %Y-%m-%dT%H-%M-%S -> e.g. 2023-07-26T17:25:00
+ * @param end Needed Format %Y-%m-%dT%H-%M-%S -> e.g. 2023-07-26T17:25:00
+ * @return 
+*/
+CalendarStruct<3> EasyHA::getCalendarEntries(String calendar_id, String start, String end) {
+  
+
+  String url = this->_baseURL + "/api/calendars/" + calendar_id + "?start=" + start + "&end=" + end;
+  String payload = httpGetCall(url);
+  StaticJsonDocument<1154> doc;
+  DeserializationError error = deserializeJson(doc,payload);
+  CalendarStruct<3> calendarStruct;
+  calendarStruct.entries = 0;
+  for(int i = 0; i < doc.size();i++){
+    calendarStruct.entries += 1;
+    calendarStruct.start[i] = doc[i]["start"]["date"].as<String>();
+    calendarStruct.end[i] = doc[i]["end"]["date"].as<String>();
+    calendarStruct.summary[i] = doc[i]["summary"].as<String>();
+  }
+
+  return calendarStruct;
+}
+
+SensorStruct EasyHA::readSensorValue(String entityID) {
+    String url = this->_baseURL + "/api/states/sensor." + entityID;
     String payload = this->httpGetCall(url);
     StaticJsonDocument<768> doc;
     DeserializationError error = deserializeJson(doc, payload);
@@ -58,28 +105,28 @@ SensorStruct EasyHA::readSensorValue(String entity_id) {
     return values;
 }
 
-String EasyHA::updateSensorValue(String entity_id, String state, std::map<String,String> attributes) {
-  String url = this->_baseURL + "/api/states/sensor." + entity_id;
+String EasyHA::updateSensorValue(String entityID, String state, std::map<String,String> attributes) {
+  String url = this->_baseURL + "/api/states/sensor." + entityID;
   SensorStruct values;
   String payload = constructHAJson(state,attributes);
   return httpPostCall(url,payload);
 }
 
-String EasyHA::updateSensorValue(String entity_id,String state, String unit) {
+String EasyHA::updateSensorValue(String entityID,String state, String unit) {
   std::map<String,String> attributes;
   attributes.insert(std::pair<String,String>("unit_of_measurement",unit));
-  return updateSensorValue(entity_id,state,attributes);
+  return updateSensorValue(entityID,state,attributes);
 }
 
-String EasyHA::updateSensorValue(String entity_id,String state, String unit, String friendly_name){
+String EasyHA::updateSensorValue(String entityID,String state, String unit, String friendly_name){
   std::map<String,String> attributes;
   attributes.insert(std::pair<String,String>("unit_of_measurement",unit));
   attributes.insert(std::pair<String,String>("friendly_name",friendly_name));
-  return updateSensorValue(entity_id,state,attributes);
+  return updateSensorValue(entityID,state,attributes);
 }
 
-boolean EasyHA::deleteEntity(String entity_id) {
-  String url = this->_baseURL + "/api/states/sensor." + entity_id;
+boolean EasyHA::deleteEntity(String entityID) {
+  String url = this->_baseURL + "/api/states/sensor." + entityID;
   int httpCode = httpDeleteCall(url);
   if(httpCode == 200) {
     return true;

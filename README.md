@@ -7,9 +7,10 @@ For the full API see the [official Home Assistant Documentation](https://develop
 
 ### Currently implemented:
 - (GET,POST,DELETE) -> /api/states/\<entity_id>
+- (GET) -> /api/calendars 
 
 **Still ToDo:**
-- Calendars
+- Calendars for more than 3 entries at a time
 - MQTT API
 
 

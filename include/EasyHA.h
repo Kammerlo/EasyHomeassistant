@@ -18,12 +18,11 @@ struct SensorStruct {
     String state;
     std::map<String,String> attributes;
 };
-
-template<size_t desiredSize> struct CalendarStruct {
+struct CalendarStruct {
     int entries;
-    String start[desiredSize];
-    String end[desiredSize];
-    String summary[desiredSize];
+    String* start;
+    String* end;
+    String* summary;
 };
 
 class EasyHA
@@ -37,8 +36,8 @@ class EasyHA
         String updateSensorValue(String entityId,String state, std::map<String,String> attributes);
         String updateSensorValue(String entityId,String state, String unit);
         String updateSensorValue(String entityId,String state, String unit, String friendly_name);
-        CalendarStruct<3> getCalendarEntries(String calendar_id, time_t start, time_t end);
-        CalendarStruct<3> getCalendarEntries(String calendar_id, String start, String end);
+        CalendarStruct getCalendarEntries(String calendar_id, time_t start, time_t end, int dynamicJsonDocumentBufferSize);
+        CalendarStruct getCalendarEntries(String calendar_id, String start, String end, int dynamicJsonDocumentBufferSize);
 
 
         boolean deleteEntity(String entityId);

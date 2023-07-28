@@ -48,12 +48,12 @@ void EasyHA::setHTTPClient(HTTPClient &client) {
  * @param end Needed Format %Y-%m-%dT%H-%M-%S -> e.g. 2023-07-26T17:25:00
  * @return 
 */
-CalendarStruct<3> EasyHA::getCalendarEntries(String calendar_id, time_t start, time_t end) {
+CalendarStruct EasyHA::getCalendarEntries(String calendar_id, time_t start, time_t end, int dynamicJsonDocumentBufferSize = 1154) {
   char startDate[20];
   char endDate[20];
   strftime(startDate,sizeof(startDate),"%Y-%m-%dT%H-%M-%S", localtime(&start));
   strftime(endDate,sizeof(endDate),"%Y-%m-%dT%H-%M-%S", localtime(&end));
-  return getCalendarEntries(calendar_id,String(startDate),String(endDate));
+  return getCalendarEntries(calendar_id,String(startDate),String(endDate),dynamicJsonDocumentBufferSize);
 }
 
 /**
@@ -66,17 +66,20 @@ CalendarStruct<3> EasyHA::getCalendarEntries(String calendar_id, time_t start, t
  * @param end Needed Format %Y-%m-%dT%H-%M-%S -> e.g. 2023-07-26T17:25:00
  * @return 
 */
-CalendarStruct<3> EasyHA::getCalendarEntries(String calendar_id, String start, String end) {
-  
-
+CalendarStruct EasyHA::getCalendarEntries(String calendar_id, String start, String end, int dynamicJsonDocumentBufferSize = 1154) {
   String url = this->_baseURL + "/api/calendars/" + calendar_id + "?start=" + start + "&end=" + end;
   String payload = httpGetCall(url);
-  StaticJsonDocument<1154> doc;
+  DynamicJsonDocument doc(dynamicJsonDocumentBufferSize);
   DeserializationError error = deserializeJson(doc,payload);
-  CalendarStruct<3> calendarStruct;
-  calendarStruct.entries = 0;
+  if(doc.overflowed()) {
+    Serial.println("JSON Document overflowed.");
+  }
+  CalendarStruct calendarStruct;
+  calendarStruct.entries = doc.size();
+  calendarStruct.start = new String[calendarStruct.entries];
+  calendarStruct.end = new String[calendarStruct.entries];
+  calendarStruct.summary = new String[calendarStruct.entries];
   for(int i = 0; i < doc.size();i++){
-    calendarStruct.entries += 1;
     calendarStruct.start[i] = doc[i]["start"]["date"].as<String>();
     calendarStruct.end[i] = doc[i]["end"]["date"].as<String>();
     calendarStruct.summary[i] = doc[i]["summary"].as<String>();

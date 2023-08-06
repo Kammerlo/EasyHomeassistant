@@ -40,7 +40,7 @@ class EasyHA
         CalendarStruct getCalendarEntries(String calendar_id, String start, String end, int dynamicJsonDocumentBufferSize);
 
 
-        boolean deleteEntity(String entityId);
+        // boolean deleteEntity(String entityId);
         
         void setWifiClient(WiFiClient &client);
         void setHTTPClient(HTTPClient &client);
@@ -53,13 +53,13 @@ class EasyHA
     private: 
         String _baseURL;
         String _HAToken;
-        uint16 _port;
+        uint _port;
         WiFiClient *_wifiClient = new WiFiClient();
         HTTPClient *_httpClient = new HTTPClient();
 
         String httpGetCall(String url);
         String httpPostCall(String url, String payload);
-        int httpDeleteCall(String url);
+        // int httpDeleteCall(String url);
         String constructHAJson(String state,std::map<String,String> attributes);
 
         String httpResponseHandling(int httpCode);

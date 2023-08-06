@@ -128,15 +128,15 @@ String EasyHA::updateSensorValue(String entityID,String state, String unit, Stri
   return updateSensorValue(entityID,state,attributes);
 }
 
-boolean EasyHA::deleteEntity(String entityID) {
-  String url = this->_baseURL + "/api/states/sensor." + entityID;
-  int httpCode = httpDeleteCall(url);
-  if(httpCode == 200) {
-    return true;
-  } else {
-    return false;
-  }
-}
+// boolean EasyHA::deleteEntity(String entityID) {
+//   String url = this->_baseURL + "/api/states/sensor." + entityID;
+//   int httpCode = httpDeleteCall(url);
+//   if(httpCode == 200) {
+//     return true;
+//   } else {
+//     return false;
+//   }
+// }
 
 
 String EasyHA::constructHAJson(String state, std::map<String,String> attributes) {
@@ -181,17 +181,17 @@ String EasyHA::httpPostCall(String url, String payload) {
   return response;
 }
 
-int EasyHA::httpDeleteCall(String url) {
-  int httpCode;
-  if(_httpClient->begin(*_wifiClient,url)) {
-    prepareHTTPHeader();
-    httpCode = _httpClient->DELETE();
-  } else {
-    httpCode = -1;
-  }
-  _httpClient->end();
-  return httpCode;
-}
+// int EasyHA::httpDeleteCall(String url) {
+//   int httpCode;
+//   if(_httpClient->begin(*_wifiClient,url)) {
+//     prepareHTTPHeader();
+//     httpCode = _httpClient->DELETE();
+//   } else {
+//     httpCode = -1;
+//   }
+//   _httpClient->end();
+//   return httpCode;
+// }
 
 String EasyHA::httpResponseHandling(int httpCode) {
   String payload;
